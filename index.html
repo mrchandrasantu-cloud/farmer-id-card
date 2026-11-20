@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Agri Stack Digital Farmer ID Card Generator (CR80 86x54mm PVC Ready) by CHANDRA ENTERPRISE, Madanmohanpur, Rathtala, Bankura." />
+<meta name="robots" content="index, follow" />
+<title>Agri Stack Digital Farmer ID Card Studio — CHANDRA ENTERPRISE</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@500;600;700;800&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand-green: #084c35;
+    --brand-green-dark: #053826;
+    --accent-gold: #f4b41a;
+    --accent-lime: #6ec138;
+    --ui-bg: #eef2f5;
+    --panel-bg: #ffffff;
+    --border-color: #cbd5e1;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Roboto', 'Noto Sans Bengali', sans-serif;
+    background: var(--ui-bg);
+    color: #1e293b;
+    min-height: 100vh;
+  }
+
+  /* Top Studio Header */
+  .topbar {
+    background: linear-gradient(135deg, #063b29 0%, #0b5d41 100%);
+    color: #fff;
+    padding: 12px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  .topbar-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .topbar-title h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+  .topbar-badge {
+    background: #16a34a;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+  }
+  .topbar-sub {
+    font-size: 12px;
+    color: #cbd5e1;
+    margin-top: 2px;
+  }
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Main Workspace */
+  .workspace {
+    max-width: 1480px;
+    margin: 18px auto;
+    padding: 0 16px 40px;
+    display: grid;
+    grid-template-columns: 450px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  @media (max-width: 1180px) {
+    .workspace {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  }
+
+  .section-box {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 14px;
+    background: #f8fafc;
+  }
+  .section-box:last-child {
+    margin-bottom: 0;
+  }
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #084c35;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  /* Upload Box */
+  .upload-zone {
+    border: 2px dashed #15803d;
+    background: #f0fdf4;
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .upload-zone:hover {
+    background: #dcfce7;
+  }
+  .upload-zone strong {
+    display: block;
+    color: #14532d;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .upload-zone span {
+    font-size: 12px;
+    color: #475569;
+  }
+
+  .status-bar {
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: #e2e8f0;
+    color: #334155;
+    display: none;
+  }
+  .status-bar.active { display: block; }
+  .status-bar.ok { background: #dcfce7; color: #166534; }
+  .status-bar.warn { background: #fef3c7; color: #92400e; }
+
+  /* Form Inputs */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .field {
+    margin-bottom: 8px;
+  }
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 3px;
+  }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    padding: 7px 9px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-family: inherit;
+    background: #fff;
+    color: #0f172a;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none;
+    border-color: #084c35;
+    box-shadow: 0 0 0 2px rgba(8, 76, 53, 0.12);
+  }
+
+  /* Buttons */
+  .btn {
+    border: none;
+    border-radius: 7px;
+    padding: 8px 13px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: 0.15s;
+  }
+  .btn-primary { background: #084c35; color: #fff; }
+  .btn-primary:hover { background: #063827; }
+  .btn-emerald { background: #15803d; color: #fff; }
+  .btn-emerald:hover { background: #166534; }
+  .btn-amber { background: #d97706; color: #fff; }
+  .btn-amber:hover { background: #b45309; }
+  .btn-outline { background: #fff; color: #1e293b; border: 1px solid #cbd5e1; }
+  .btn-outline:hover { background: #f1f5f9; }
+  .btn-danger { background: #fee2e2; color: #b91c1c; padding: 4px 8px; font-size: 11px; }
+  .btn-danger:hover { background: #fecaca; }
+  .btn-sm { padding: 5px 9px; font-size: 11.5px; }
+
+  /* Photo Controls */
+  .photo-ctrl-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .photo-thumb {
+    width: 48px;
+    height: 60px;
+    border-radius: 5px;
+    border: 1px solid #94a3b8;
+    object-fit: cover;
+    background: #e2e8f0;
+  }
+  .slider-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+  }
+  .slider-grid label {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #475569;
+    display: block;
+  }
+  .slider-grid input[type="range"] {
+    width: 100%;
+    accent-color: #084c35;
+  }
+
+  /* Plot Editor Table */
+  .plot-editor-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+  .plot-row-edit {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.1fr 0.7fr 0.85fr auto;
+    gap: 4px;
+    align-items: center;
+    background: #fff;
+    padding: 5px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+  }
+  .plot-row-edit input {
+    width: 100%;
+    padding: 4px 5px;
+    font-size: 11px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+  }
+
+  /* Right Preview & Export Area */
+  .preview-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .export-bar {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  }
+  .dpi-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dpi-group select {
+    padding: 8px 12px;
+    border-radius: 7px;
+    border: 1.5px solid #084c35;
+    font-weight: 700;
+    font-size: 13px;
+    color: #084c35;
+    background: #f0fdf4;
+  }
+
+  .cards-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+    background: #dfe6ed;
+    border: 1px solid #cbd5e1;
+    border-radius: 14px;
+    padding: 24px 16px;
+    overflow-x: auto;
+  }
+
+  .card-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-label-row {
+    width: 680px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 800;
+    color: #334155;
+    letter-spacing: 0.4px;
+  }
+  .card-label-row span.dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #16a34a;
+    margin-right: 5px;
+  }
+
+  /* =========================================================
+     EXACT CR80 (86mm x 54mm -> 680px x 427px) CARD DESIGN
+     ========================================================= */
+  .pvc-card {
+    width: 680px;
+    height: 427px;
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    background: #f6f7eb;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  /* Security Guilloche & Gradient Background */
+  .card-bg-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 18% 72%, rgba(226, 232, 165, 0.55) 0%, rgba(246, 247, 235, 0) 58%),
+      radial-gradient(circle at 82% 35%, rgba(212, 233, 198, 0.48) 0%, rgba(246, 247, 235, 0) 60%),
+      linear-gradient(125deg, #f3f5e4 0%, #f9faf2 48%, #edf3e4 100%);
+  }
+
+  /* Top Header Bar */
+  .card-header {
+    height: 60px;
+    background: #084c35;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    padding: 0 22px;
+    overflow: hidden;
+  }
+  .card-header-waves {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .card-header-content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .header-divider {
+    width: 1.5px;
+    height: 26px;
+    background: rgba(255, 255, 255, 0.35);
+  }
+  .header-title-text {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    font-family: 'Roboto', sans-serif;
+  }
+  .header-title-back {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+  }
+
+  /* Front Body Grid — Pixel-Matched to Reference f03a3cc1 */
+  .front-body {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    padding: 15px 22px 10px 22px;
+    display: grid;
+    grid-template-columns: 162px 1fr 142px;
+    column-gap: 18px;
+    align-items: start;
+  }
+
+  /* Left Column: Photo + Farmer ID tightly positioned underneath */
+  .front-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .photo-frame {
+    width: 156px;
+    height: 222px;
+    border: 2px solid #96ad8a;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #d8dfd2;
+    position: relative;
+    box-shadow: inset 0 0 4px rgba(0,0,0,0.08);
+  }
+  .photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform-origin: center center;
+    display: block;
+  }
+  .farmer-id-block {
+    margin-top: 9px;
+    text-align: center;
+    line-height: 1.15;
+  }
+  .farmer-id-caption {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #2b3830;
+    margin-bottom: 3px;
+  }
+  .farmer-id-digits {
+    font-size: 18.5px;
+    font-weight: 900;
+    color: #0b2419;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  /* Middle Column: Exact vertical alignment matching photo height (222px) */
+  .front-mid {
+    height: 222px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-top: 1px;
+    padding-bottom: 1px;
+  }
+  .name-group {
+    line-height: 1.18;
+  }
+  .farmer-name-en {
+    font-size: 20px;
+    font-weight: 900;
+    color: #0c1f17;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+  }
+  .farmer-name-bn {
+    font-size: 16.5px;
+    font-weight: 700;
+    color: #15803d;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    margin-top: 2px;
+  }
+  .meta-row-2col {
+    display: grid;
+    grid-template-columns: 165px 1fr;
+    gap: 8px;
+  }
+  .meta-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: #5b6960;
+    text-transform: uppercase;
+    letter-spacing: 0.35px;
+    margin-bottom: 2px;
+  }
+  .meta-val {
+    font-size: 15px;
+    font-weight: 800;
+    color: #0f231a;
+    line-height: 1.15;
+  }
+
+  /* Right Column: QR Code + Scan to Verify + UIDAI Verified Badge */
+  .front-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 2px;
+  }
+  .qr-box {
+    width: 136px;
+    height: 136px;
+    background: #ffffff;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #cbd5c0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .qr-box img, .qr-box canvas {
+    width: 124px !important;
+    height: 124px !important;
+    display: block;
+  }
+  .scan-caption {
+    margin-top: 9px;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #3f4e45;
+  }
+  .uidai-pill {
+    margin-top: 5px;
+    background: #d7ebd9;
+    border: 1px solid #96c79c;
+    color: #0f5c2e;
+    font-size: 10.5px;
+    font-weight: 800;
+    height: 22px;
+    line-height: 20px;
+    padding: 0 12px 2px 12px;
+    border-radius: 999px;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+
+  /* Bottom Footer Bar */
+  .card-footer {
+    height: 36px;
+    line-height: 34px;
+    background: #084c35;
+    position: relative;
+    z-index: 2;
+    padding: 0 22px 2px 22px;
+    display: block;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.55px;
+    text-transform: uppercase;
+  }
+  .card-footer span:first-child {
+    float: left;
+  }
+  .card-footer span:last-child {
+    float: right;
+  }
+
+  /* =========================================================
+     BACK SIDE LAYOUT (86mm x 54mm -> 680px x 427px)
+     ========================================================= */
+  .back-body {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    padding: 11px 22px 6px 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .back-info-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12.5px;
+    margin-bottom: 4px;
+  }
+  .back-info-label {
+    font-weight: 700;
+    color: #334139;
+    min-width: 158px;
+  }
+  .back-info-val {
+    font-weight: 800;
+    color: #0c1f17;
+    font-size: 13.5px;
+  }
+  .ekyc-pill {
+    background: #d7ebd9;
+    border: 1px solid #96c79c;
+    color: #0f5c2e;
+    font-size: 11px;
+    font-weight: 800;
+    height: 22px;
+    line-height: 20px;
+    padding: 0 11px 2px 11px;
+    border-radius: 999px;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .back-address {
+    font-size: 12px;
+    font-weight: 700;
+    color: #16261d;
+    padding: 3px 0 5px;
+    border-bottom: 1px solid #c5d1be;
+    margin-bottom: 4px;
+  }
+  .back-address span.lbl {
+    color: #47554d;
+    font-weight: 700;
+  }
+
+  /* Land Table */
+  .land-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    margin-top: 2px;
+  }
+  .land-table th {
+    text-align: left;
+    font-weight: 800;
+    color: #1e2e24;
+    padding: 3px 4px;
+    border-bottom: 1.5px solid #9db096;
+    font-size: 11px;
+  }
+  .land-table td {
+    padding: 2.5px 4px;
+    font-weight: 700;
+    color: #132219;
+    border-bottom: 1px solid rgba(157, 176, 150, 0.35);
+  }
+  .recorded-plots-line {
+    margin-top: 5px;
+    font-size: 11.5px;
+    font-weight: 800;
+    color: #0d2117;
+  }
+  .recorded-plots-line span {
+    color: #3b4a41;
+    font-weight: 700;
+  }
+  .disclaimer-note {
+    text-align: center;
+    font-size: 9px;
+    font-weight: 700;
+    color: #526158;
+    letter-spacing: 0.4px;
+    margin-top: 3px;
+  }
+
+  /* Debug Text Drawer */
+  .debug-box {
+    margin-top: 8px;
+  }
+  .debug-box textarea {
+    width: 100%;
+    height: 110px;
+    font-size: 11px;
+    font-family: monospace;
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background: #0f172a;
+    color: #e2e8f0;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Top Studio Header -->
+  <header class="topbar">
+    <div class="topbar-title">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <h1>Agri Stack Digital Farmer ID Card Studio</h1>
+          <span class="topbar-badge">CR80 PVC READY (86×54mm)</span>
+        </div>
+        <div class="topbar-sub">CHANDRA ENTERPRISE • Madanmohanpur, Rathtala, Bankura • Ph: 9735351587</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-outline btn-sm" onclick="loadSampleData()">↻ Load Sample Data</button>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="workspace">
+
+    <!-- Left Controls & Editor -->
+    <div class="panel">
+
+      <!-- 1. PDF Upload -->
+      <div class="section-box">
+        <div class="section-title">
+          <span>1. Upload Farmer Registration PDF</span>
+          <button class="btn btn-amber btn-sm" id="forceOcrBtn" onclick="runForceOCR()" style="display:none;">🔍 Force OCR</button>
+        </div>
+        <div class="upload-zone" onclick="document.getElementById('pdfInput').click()">
+          <strong>📄 Click to Upload Farmer Registration Form (PDF)</strong>
+          <span>Auto-extracts Farmer Details, Photo &amp; Multi-Page Land Ownership Table</span>
+          <input type="file" id="pdfInput" accept="application/pdf" style="display:none;" onchange="handlePdfUpload(event)" />
+        </div>
+        <div id="pdfStatus" class="status-bar"></div>
+      </div>
+
+      <!-- 2. Photo Upload & Crop Controls -->
+      <div class="section-box">
+        <div class="section-title">
+          <span>2. Farmer Photo (আলাদা ছবি আপলোড ও অ্যাডজাস্ট)</span>
+        </div>
+        <div class="photo-ctrl-row">
+          <img id="photoThumb" class="photo-thumb" alt="Preview" />
+          <div style="flex:1;display:flex;flex-wrap:wrap;gap:6px;">
+            <button class="btn btn-primary btn-sm" onclick="document.getElementById('photoInput').click()">🖼️ Browse Photo (Change)</button>
+            <button class="btn btn-outline btn-sm" onclick="resetPhotoAdjust()">Reset Crop</button>
+            <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handleCustomPhoto(event)" />
+          </div>
+        </div>
+        <div class="slider-grid">
+          <div>
+            <label>Zoom: <span id="zoomVal">100%</span></label>
+            <input type="range" id="photoZoom" min="80" max="220" value="100" oninput="updatePhotoTransform()" />
+          </div>
+          <div>
+            <label>Left / Right: <span id="panXVal">0</span></label>
+            <input type="range" id="photoPanX" min="-60" max="60" value="0" oninput="updatePhotoTransform()" />
+          </div>
+          <div>
+            <label>Up / Down: <span id="panYVal">0</span></label>
+            <input type="range" id="photoPanY" min="-60" max="60" value="0" oninput="updatePhotoTransform()" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Front Side Details Editor -->
+      <div class="section-box">
+        <div class="section-title"><span>3. Front Side Details (ম্যানুয়াল এডিট)</span></div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Farmer Name (English)</label>
+            <input type="text" id="inpNameEn" value="SANTU CHANDRA" oninput="renderCard()" />
+          </div>
+          <div class="field">
+            <label>Farmer Name (Bengali / বাংলা)</label>
+            <input type="text" id="inpNameBn" value="সন্তু চন্দ্র" oninput="renderCard()" />
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Farmer ID (11 Digits)</label>
+            <input type="text" id="inpFarmerId" value="502 45 12 02 75" oninput="renderCard()" />
+          </div>
+          <div class="field">
+            <label>Date of Birth (DOB)</label>
+            <input type="text" id="inpDob" value="01/01/1980" oninput="renderCard()" />
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Gender</label>
+            <input type="text" id="inpGender" value="Male" oninput="renderCard()" />
+          </div>
+          <div class="field">
+            <label>Father / Guardian Name</label>
+            <input type="text" id="inpFather" value="ABCD CHANDRA" oninput="renderCard()" />
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Mobile Number</label>
+            <input type="text" id="inpMobile" value="9735351587" oninput="renderCard()" />
+          </div>
+          <div class="field">
+            <label>District</label>
+            <input type="text" id="inpDistrict" value="BANKURA" oninput="renderCard()" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Back Side & Land Ownership Details -->
+      <div class="section-box">
+        <div class="section-title">
+          <span>4. Back Side &amp; Land Details</span>
+          <button class="btn btn-emerald btn-sm" onclick="addPlotRow()">+ Add Plot Row</button>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Farmer Enrollment No</label>
+            <input type="text" id="inpEnrollNo" value="19_305_2367_327865_000000" oninput="renderCard()" />
+          </div>
+          <div class="field">
+            <label>e-KYC Status</label>
+            <input type="text" id="inpEkyc" value="UIDAI Aadhaar Verified" oninput="renderCard()" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Address (English / বাংলা)</label>
+          <input type="text" id="inpAddress" value="Khayerbuni Madanmohanpur / খয়েরবুনি মদনমোহনপুর" oninput="renderCard()" />
+        </div>
+
+        <div style="font-size:11px;font-weight:700;color:#475569;margin:6px 0 4px;display:grid;grid-template-columns:1fr 1fr 1.1fr 0.7fr 0.85fr 28px;gap:4px;">
+          <span>District</span><span>Sub-Dist</span><span>Village</span><span>Daag</span><span>Area(Ha)</span><span></span>
+        </div>
+        <div id="plotEditorList" class="plot-editor-list"></div>
+
+        <div class="field" style="margin-top:8px;">
+          <label>Recorded Plots / Dag No (Auto-updated or Manual Override)</label>
+          <input type="text" id="inpRecordedPlots" value="623, 527, 528, 526, 507" oninput="renderCard()" />
+        </div>
+
+        <details class="debug-box">
+          <summary style="font-size:11.5px;font-weight:700;color:#084c35;cursor:pointer;">View Extracted PDF Text (Debug / Copy Missing Info)</summary>
+          <textarea id="debugRawText" readonly placeholder="Uploaded PDF raw text will appear here..."></textarea>
+        </details>
+      </div>
+
+    </div>
+
+    <!-- Right Preview & High-DPI Export -->
+    <div class="preview-wrapper">
+
+      <!-- Export Control Bar -->
+      <div class="export-bar">
+        <div>
+          <div style="font-size:14px;font-weight:800;color:#0f172a;">🖨️ Export CR80 PVC PNG (86mm × 54mm)</div>
+          <div style="font-size:11.5px;color:#64748b;">Select DPI resolution and download Front &amp; Back separately</div>
+        </div>
+        <div class="dpi-group">
+          <label for="dpiSelect" style="font-size:12px;font-weight:700;color:#334155;">DPI:</label>
+          <select id="dpiSelect">
+            <option value="300">300 DPI (1016 × 638 px)</option>
+            <option value="600" selected>600 DPI (2031 × 1276 px)</option>
+            <option value="900">900 DPI (3047 × 1913 px)</option>
+          </select>
+          <button class="btn btn-primary" onclick="downloadCardPng('front')">⬇ Download Front Side (PNG)</button>
+          <button class="btn btn-emerald" onclick="downloadCardPng('back')">⬇ Download Back Side (PNG)</button>
+        </div>
+      </div>
+
+      <!-- Live PVC Cards Stage -->
+      <div class="cards-stage">
+
+        <!-- FRONT SIDE CARD -->
+        <div class="card-block">
+          <div class="card-label-row">
+            <span><span class="dot"></span>FRONT SIDE</span>
+            <span>86 × 54 mm (CR80)</span>
+          </div>
+
+          <div id="frontCard" class="pvc-card">
+            <div class="card-bg-layer">
+              <!-- Subtle Guilloche Pattern & Wheat Stalk Watermark -->
+              <svg width="680" height="427" viewBox="0 0 680 427" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="guillocheFront" width="44" height="44" patternUnits="userSpaceOnUse">
+                    <path d="M0 22 Q11 6 22 22 T44 22" fill="none" stroke="#9eb37c" stroke-width="0.65" opacity="0.28"/>
+                    <path d="M0 11 Q11 27 22 11 T44 11" fill="none" stroke="#8aa876" stroke-width="0.55" opacity="0.22"/>
+                    <circle cx="22" cy="22" r="14" fill="none" stroke="#b5c48b" stroke-width="0.5" opacity="0.2"/>
+                  </pattern>
+                </defs>
+                <rect width="680" height="427" fill="url(#guillocheFront)" />
+                <!-- Soft Wheat Watermark Bottom Left-Center -->
+                <g opacity="0.16" fill="#a3a847" transform="translate(195, 250) rotate(-14)">
+                  <ellipse cx="18" cy="20" rx="5" ry="13" transform="rotate(-25 18 20)"/>
+                  <ellipse cx="32" cy="14" rx="5" ry="13" transform="rotate(25 32 14)"/>
+                  <ellipse cx="16" cy="44" rx="5" ry="13" transform="rotate(-25 16 44)"/>
+                  <ellipse cx="34" cy="38" rx="5" ry="13" transform="rotate(25 34 38)"/>
+                  <ellipse cx="15" cy="68" rx="5" ry="13" transform="rotate(-25 15 68)"/>
+                  <ellipse cx="35" cy="62" rx="5" ry="13" transform="rotate(25 35 62)"/>
+                  <rect x="24" y="10" width="2.5" height="95" rx="1"/>
+                </g>
+              </svg>
+            </div>
+
+            <!-- Header -->
+            <div class="card-header">
+              <svg class="card-header-waves" viewBox="0 0 680 60" preserveAspectRatio="none">
+                <path d="M380,0 C440,35 510,5 580,45 L680,45 L680,0 Z" fill="#0d6346" opacity="0.65"/>
+                <path d="M440,60 C510,20 590,50 680,15 L680,60 Z" fill="#053826" opacity="0.6"/>
+              </svg>
+              <div class="card-header-content">
+                <!-- EXACT CUSTOM AGRI STACK LOGO SVG FROM USER IMAGE 09d1d8cf -->
+                <svg width="154" height="38" viewBox="0 0 215 52" xmlns="http://www.w3.org/2000/svg">
+                  <!-- "Agr" in crisp white -->
+                  <text x="2" y="38" fill="#ffffff" font-family="Roboto, Arial, sans-serif" font-weight="700" font-size="34" letter-spacing="-0.5">Agr</text>
+                  <!-- Stemless "i" in crisp white -->
+                  <rect x="61.5" y="17.5" width="5.4" height="20.5" rx="1" fill="#ffffff"/>
+                  <!-- Dual-leaf dot on "i": left green leaf, right golden-yellow leaf -->
+                  <path d="M63.5 14.5 C60 11.5, 59.5 7.5, 62.5 5.5 C64.5 8, 64.8 11.5, 63.5 14.5 Z" fill="#76c639"/>
+                  <path d="M65.2 14.5 C66.2 10.5, 69.2 8.2, 72.2 9.5 C70.5 12.5, 67.8 14.2, 65.2 14.5 Z" fill="#f5b82e"/>
+
+                  <!-- Layered Striped Green Stylized "S" Emblem -->
+                  <g transform="translate(79, 5)">
+                    <!-- Top-right sweeping green leaf/ribbon -->
+                    <path d="M10 11 C15 3, 29 2, 37 9 C30 8, 20 9, 14 14 Z" fill="#78c83c"/>
+                    <path d="M13 15 C20 10, 31 10, 38 15 C30 14, 21 15, 16 18 Z" fill="#54a832"/>
+                    <!-- Upper-left curve of S -->
+                    <path d="M9 12 C3 17, 5 24, 15 26 C24 28, 32 29, 34 34 C29 31, 20 30, 12 28 C2 25, 0 17, 9 12 Z" fill="#6ec138"/>
+                    <path d="M11 16 C7 19, 9 23, 17 24.5 C25 26, 33 27.5, 36 32 C31 29.5, 22 28.5, 15 27 C6 25, 5 19, 11 16 Z" fill="#8ad84c"/>
+                    <!-- Lower-right curve & bottom tail of S -->
+                    <path d="M35 28 C41 33, 38 41, 26 43 C16 44.5, 7 41, 2 35 C9 39, 18 40, 26 39 C33 38, 36 33, 32 29 Z" fill="#6ec138"/>
+                    <path d="M31 32 C33 35, 30 38, 22 38.5 C15 39, 8 37, 4 32 C10 35, 17 36, 23 35.5 C28 35, 31 33.5, 31 32 Z" fill="#4e9e2f"/>
+                  </g>
+
+                  <!-- "tack" in golden yellow (#f5b82e) -->
+                  <text x="123" y="38" fill="#f5b82e" font-family="Roboto, Arial, sans-serif" font-weight="700" font-size="34" letter-spacing="-0.4">tack</text>
+
+                  <!-- 4-dot green diamond cluster directly above the "a" in tack -->
+                  <g transform="translate(145.5, 7.5)" fill="#6ec138">
+                    <circle cx="0" cy="-3.6" r="1.85"/>
+                    <circle cx="-3.6" cy="0" r="1.85"/>
+                    <circle cx="3.6" cy="0" r="1.85"/>
+                    <circle cx="0" cy="3.6" r="1.85"/>
+                  </g>
+                </svg>
+
+                <div class="header-divider"></div>
+                <div class="header-title-text">Digital Farmer ID Card</div>
+              </div>
+            </div>
+
+            <!-- Front Body -->
+            <div class="front-body">
+              <!-- Left Column: Portrait Photo + Farmer ID tightly below -->
+              <div class="front-left">
+                <div class="photo-frame">
+                  <img id="cardPhotoImg" alt="Farmer Photo" />
+                </div>
+                <div class="farmer-id-block">
+                  <div class="farmer-id-caption">Farmer ID:</div>
+                  <div class="farmer-id-digits" id="outFarmerId">502 45 12 02 75</div>
+                </div>
+              </div>
+
+              <!-- Middle Column: Farmer Metadata aligned to photo height -->
+              <div class="front-mid">
+                <div class="name-group">
+                  <div class="farmer-name-en" id="outNameEn">DILIP RAJAK</div>
+                  <div class="farmer-name-bn" id="outNameBn">সন্তু চন্দ্র</div>
+                </div>
+
+                <div class="meta-row-2col">
+                  <div>
+                    <div class="meta-label">DOB:</div>
+                    <div class="meta-val" id="outDob">01/01/1980</div>
+                  </div>
+                  <div>
+                    <div class="meta-label">GENDER:</div>
+                    <div class="meta-val" id="outGender">Male</div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="meta-label">FATHER / GUARDIAN:</div>
+                  <div class="meta-val" id="outFather">Jiten Rajak</div>
+                </div>
+
+                <div class="meta-row-2col">
+                  <div>
+                    <div class="meta-label">MOBILE:</div>
+                    <div class="meta-val" id="outMobile">9735351587</div>
+                  </div>
+                  <div>
+                    <div class="meta-label">DISTRICT:</div>
+                    <div class="meta-val" id="outDistrict">BANKURA</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column: QR Code + Scan to Verify + UIDAI Verified -->
+              <div class="front-right">
+                <div class="qr-box" id="qrContainer"></div>
+                <div class="scan-caption">Scan to Verify</div>
+                <div class="uidai-pill">✓ UIDAI Verified</div>
+              </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="card-footer">
+              <span>DIGITAL PUBLIC INFRASTRUCTURE FOR AGRICULTURE</span>
+              <span>AGRISTACK.GOV.IN</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- BACK SIDE CARD -->
+        <div class="card-block">
+          <div class="card-label-row">
+            <span><span class="dot"></span>BACK SIDE</span>
+            <span>86 × 54 mm (CR80)</span>
+          </div>
+
+          <div id="backCard" class="pvc-card">
+            <div class="card-bg-layer">
+              <svg width="680" height="427" viewBox="0 0 680 427" xmlns="http://www.w3.org/2000/svg">
+                <rect width="680" height="427" fill="url(#guillocheFront)" />
+              </svg>
+            </div>
+
+            <!-- Header -->
+            <div class="card-header">
+              <svg class="card-header-waves" viewBox="0 0 680 60" preserveAspectRatio="none">
+                <path d="M380,0 C440,35 510,5 580,45 L680,45 L680,0 Z" fill="#0d6346" opacity="0.65"/>
+                <path d="M440,60 C510,20 590,50 680,15 L680,60 Z" fill="#053826" opacity="0.6"/>
+              </svg>
+              <div class="card-header-content">
+                <svg width="154" height="38" viewBox="0 0 215 52" xmlns="http://www.w3.org/2000/svg">
+                  <text x="2" y="38" fill="#ffffff" font-family="Roboto, Arial, sans-serif" font-weight="700" font-size="34" letter-spacing="-0.5">Agr</text>
+                  <rect x="61.5" y="17.5" width="5.4" height="20.5" rx="1" fill="#ffffff"/>
+                  <path d="M63.5 14.5 C60 11.5, 59.5 7.5, 62.5 5.5 C64.5 8, 64.8 11.5, 63.5 14.5 Z" fill="#76c639"/>
+                  <path d="M65.2 14.5 C66.2 10.5, 69.2 8.2, 72.2 9.5 C70.5 12.5, 67.8 14.2, 65.2 14.5 Z" fill="#f5b82e"/>
+                  <g transform="translate(79, 5)">
+                    <path d="M10 11 C15 3, 29 2, 37 9 C30 8, 20 9, 14 14 Z" fill="#78c83c"/>
+                    <path d="M13 15 C20 10, 31 10, 38 15 C30 14, 21 15, 16 18 Z" fill="#54a832"/>
+                    <path d="M9 12 C3 17, 5 24, 15 26 C24 28, 32 29, 34 34 C29 31, 20 30, 12 28 C2 25, 0 17, 9 12 Z" fill="#6ec138"/>
+                    <path d="M11 16 C7 19, 9 23, 17 24.5 C25 26, 33 27.5, 36 32 C31 29.5, 22 28.5, 15 27 C6 25, 5 19, 11 16 Z" fill="#8ad84c"/>
+                    <path d="M35 28 C41 33, 38 41, 26 43 C16 44.5, 7 41, 2 35 C9 39, 18 40, 26 39 C33 38, 36 33, 32 29 Z" fill="#6ec138"/>
+                    <path d="M31 32 C33 35, 30 38, 22 38.5 C15 39, 8 37, 4 32 C10 35, 17 36, 23 35.5 C28 35, 31 33.5, 31 32 Z" fill="#4e9e2f"/>
+                  </g>
+                  <text x="123" y="38" fill="#f5b82e" font-family="Roboto, Arial, sans-serif" font-weight="700" font-size="34" letter-spacing="-0.4">tack</text>
+                  <g transform="translate(145.5, 7.5)" fill="#6ec138">
+                    <circle cx="0" cy="-3.6" r="1.85"/>
+                    <circle cx="-3.6" cy="0" r="1.85"/>
+                    <circle cx="3.6" cy="0" r="1.85"/>
+                    <circle cx="0" cy="3.6" r="1.85"/>
+                  </g>
+                </svg>
+                <div class="header-divider"></div>
+                <div class="header-title-back">FARMER REGISTRY DETAILS</div>
+              </div>
+            </div>
+
+            <!-- Back Body -->
+            <div class="back-body">
+              <div>
+                <div class="back-info-row">
+                  <span class="back-info-label">Farmer Enrollment No:</span>
+                  <span class="back-info-val" id="outEnrollNo">19_305_2367_327865_000000</span>
+                </div>
+                <div class="back-info-row">
+                  <span class="back-info-label">e-KYC Verification Status:</span>
+                  <span class="ekyc-pill" id="outEkyc">✓ UIDAI Aadhaar Verified</span>
+                </div>
+                <div class="back-address">
+                  <span class="lbl">Address: </span><span id="outAddress">Khayerbuni Madanmohanpur / খয়েরবুনি মদনমোহনপুর</span>
+                </div>
+
+                <!-- Land Ownership Table -->
+                <table class="land-table">
+                  <thead>
+                    <tr>
+                      <th style="width:20%;">District</th>
+                      <th style="width:20%;">SUB</th>
+                      <th style="width:26%;">Vill</th>
+                      <th style="width:15%;">Daag</th>
+                      <th style="width:19%;">Area (Ha)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="outLandTbody"></tbody>
+                </table>
+
+                <div class="recorded-plots-line">
+                  <span>Recorded Plots / Dag No: </span><span id="outRecordedPlots">623, 527, 528, 526, 507</span>
+                </div>
+              </div>
+
+              <div class="disclaimer-note">FOR PERSONAL USE ONLY, NOT FOR OFFICIAL USE</div>
+            </div>
+
+            <!-- Footer -->
+            <div class="card-footer">
+              <span>GOVERNMENT OF INDIA &amp; DEPARTMENT OF AGRICULTURE</span>
+              <span>AGRISTACK.GOV.IN</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+<script>
+  // Configure PDF.js Worker
+  if (window.pdfjsLib) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+
+  // Default Silhouette Avatar SVG
+  const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="200" height="260" viewBox="0 0 200 260">
+      <rect width="200" height="260" fill="#cbd5c0"/>
+      <circle cx="100" cy="92" r="44" fill="#647468"/>
+      <path d="M26 245 C26 182, 174 182, 174 245 Z" fill="#647468"/>
+    </svg>
+  `);
+
+  let plotsData = [
+    { district: 'BANKURA', sub: 'Kotulpur', vill: 'Chak Murakha', daag: '623', area: '0.249430' },
+    { district: 'BANKURA', sub: 'Kotulpur', vill: 'Chak Murakha', daag: '527', area: '0.655100' },
+    { district: 'BANKURA', sub: 'Kotulpur', vill: 'Chak Murakha', daag: '528', area: '0.165060' },
+    { district: 'BANKURA', sub: 'Kotulpur', vill: 'Chak Murakha', daag: '526', area: '0.147390' },
+    { district: 'BANKURA', sub: 'Kotulpur', vill: 'Chak Murakha', daag: '507', area: '0.327540' }
+  ];
+
+  let lastUploadedPdfFile = null;
+  let lastQrString = '';
+
+  function setStatus(msg, type = 'ok') {
+    const el = document.getElementById('pdfStatus');
+    el.textContent = msg;
+    el.className = 'status-bar active ' + type;
+  }
+
+  function formatFarmerId(raw) {
+    const digits = (raw || '').replace(/\D/g, '');
+    if (digits.length === 11) {
+      return `${digits.slice(0,3)} ${digits.slice(3,5)} ${digits.slice(5,7)} ${digits.slice(7,9)} ${digits.slice(9,11)}`;
+    }
+    return raw.trim();
+  }
+
+  function renderPlotEditor() {
+    const container = document.getElementById('plotEditorList');
+    container.innerHTML = '';
+    plotsData.forEach((row, idx) => {
+      const div = document.createElement('div');
+      div.className = 'plot-row-edit';
+      div.innerHTML = `
+        <input type="text" value="${escapeHtml(row.district)}" placeholder="District" oninput="updatePlotField(${idx}, 'district', this.value)" />
+        <input type="text" value="${escapeHtml(row.sub)}" placeholder="Sub-Dist" oninput="updatePlotField(${idx}, 'sub', this.value)" />
+        <input type="text" value="${escapeHtml(row.vill)}" placeholder="Village" oninput="updatePlotField(${idx}, 'vill', this.value)" />
+        <input type="text" value="${escapeHtml(row.daag)}" placeholder="Daag" oninput="updatePlotField(${idx}, 'daag', this.value)" />
+        <input type="text" value="${escapeHtml(row.area)}" placeholder="Area" oninput="updatePlotField(${idx}, 'area', this.value)" />
+        <button class="btn btn-danger" title="Remove" onclick="removePlotRow(${idx})">✕</button>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function updatePlotField(idx, key, val) {
+    plotsData[idx][key] = val;
+    if (key === 'daag') {
+      syncRecordedPlotsFromTable();
+    }
+    renderCard();
+  }
+
+  function syncRecordedPlotsFromTable() {
+    const dags = plotsData.map(p => p.daag.trim()).filter(Boolean);
+    document.getElementById('inpRecordedPlots').value = dags.join(', ');
+  }
+
+  function addPlotRow() {
+    const defaultDist = document.getElementById('inpDistrict').value || 'BANKURA';
+    const lastSub = plotsData.length ? plotsData[plotsData.length - 1].sub : '';
+    const lastVill = plotsData.length ? plotsData[plotsData.length - 1].vill : '';
+    plotsData.push({ district: defaultDist, sub: lastSub, vill: lastVill, daag: '', area: '' });
+    renderPlotEditor();
+    renderCard();
+  }
+
+  function removePlotRow(idx) {
+    plotsData.splice(idx, 1);
+    renderPlotEditor();
+    syncRecordedPlotsFromTable();
+    renderCard();
+  }
+
+  function escapeHtml(str) {
+    return String(str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function renderCard() {
+    const nameEn = document.getElementById('inpNameEn').value.trim();
+    const nameBn = document.getElementById('inpNameBn').value.trim();
+    const farmerId = formatFarmerId(document.getElementById('inpFarmerId').value);
+    const dob = document.getElementById('inpDob').value.trim();
+    const gender = document.getElementById('inpGender').value.trim();
+    const father = document.getElementById('inpFather').value.trim() || 'N/A';
+    const mobile = document.getElementById('inpMobile').value.trim();
+    const district = document.getElementById('inpDistrict').value.trim();
+    const enrollNo = document.getElementById('inpEnrollNo').value.trim();
+    const ekyc = document.getElementById('inpEkyc').value.trim();
+    const address = document.getElementById('inpAddress').value.trim();
+    const recordedPlots = document.getElementById('inpRecordedPlots').value.trim();
+
+    document.getElementById('outNameEn').textContent = nameEn;
+    document.getElementById('outNameBn').textContent = nameBn;
+    document.getElementById('outFarmerId').textContent = farmerId;
+    document.getElementById('outDob').textContent = dob;
+    document.getElementById('outGender').textContent = gender;
+    document.getElementById('outFather').textContent = father;
+    document.getElementById('outMobile').textContent = mobile;
+    document.getElementById('outDistrict').textContent = district;
+
+    document.getElementById('outEnrollNo').textContent = enrollNo;
+    document.getElementById('outEkyc').textContent = ekyc.startsWith('✓') ? ekyc : '✓ ' + ekyc;
+    document.getElementById('outAddress').textContent = address;
+    document.getElementById('outRecordedPlots').textContent = recordedPlots;
+
+    // Render Land Rows (up to 6 visible rows cleanly)
+    const tbody = document.getElementById('outLandTbody');
+    tbody.innerHTML = '';
+    const displayRows = plotsData.slice(0, 6);
+    displayRows.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escapeHtml(r.district)}</td>
+        <td>${escapeHtml(r.sub)}</td>
+        <td>${escapeHtml(r.vill)}</td>
+        <td>${escapeHtml(r.daag)}</td>
+        <td>${escapeHtml(r.area)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Update Dynamic QR Code
+    const qrPayload = `AgriStack Farmer ID: ${farmerId} | Name: ${nameEn} | DOB: ${dob} | Enroll: ${enrollNo} | District: ${district}`;
+    if (qrPayload !== lastQrString) {
+      lastQrString = qrPayload;
+      const qrBox = document.getElementById('qrContainer');
+      qrBox.innerHTML = '';
+      if (window.QRCode) {
+        new QRCode(qrBox, {
+          text: qrPayload,
+          width: 124,
+          height: 124,
+          colorDark: '#0b1f16',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      }
+    }
+  }
+
+  // Photo Management
+  function setPhotoSrc(dataUrl) {
+    document.getElementById('cardPhotoImg').src = dataUrl;
+    document.getElementById('photoThumb').src = dataUrl;
+  }
+
+  function handleCustomPhoto(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      setPhotoSrc(ev.target.result);
+      resetPhotoAdjust();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function updatePhotoTransform() {
+    const z = document.getElementById('photoZoom').value;
+    const x = document.getElementById('photoPanX').value;
+    const y = document.getElementById('photoPanY').value;
+    document.getElementById('zoomVal').textContent = z + '%';
+    document.getElementById('panXVal').textContent = x;
+    document.getElementById('panYVal').textContent = y;
+    const img = document.getElementById('cardPhotoImg');
+    img.style.transform = `translate(${x}px, ${y}px) scale(${z / 100})`;
+  }
+
+  function resetPhotoAdjust() {
+    document.getElementById('photoZoom').value = 100;
+    document.getElementById('photoPanX').value = 0;
+    document.getElementById('photoPanY').value = 0;
+    updatePhotoTransform();
+  }
+
+  // =========================================================
+  // SMART MULTI-PAGE PDF + OCR DATA & PHOTO EXTRACTOR
+  // =========================================================
+  async function handlePdfUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    lastUploadedPdfFile = file;
+    document.getElementById('forceOcrBtn').style.display = 'inline-flex';
+    setStatus('⏳ Reading PDF pages, extracting embedded photo & land table...', 'warn');
+
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let allPagesText = '';
+      let allItems = [];
+
+      for (let p = 1; p <= pdf.numPages; p++) {
+        const page = await pdf.getPage(p);
+        const textContent = await page.getTextContent();
+        const pageItems = textContent.items.map(it => ({
+          str: it.str,
+          x: Math.round(it.transform[4]),
+          y: Math.round(it.transform[5]),
+          page: p
+        }));
+        allItems.push(...pageItems);
+
+        // Reconstruct lines by Y coordinate
+        const lines = clusterLines(pageItems);
+        allPagesText += `--- PAGE ${p} ---\n` + lines.join('\n') + '\n\n';
+      }
+
+      // Extract embedded farmer portrait photo from Page 1
+      await extractEmbeddedPhotoFromPage(await pdf.getPage(1));
+
+      document.getElementById('debugRawText').value = allPagesText;
+
+      // If PDF has almost no selectable text (scanned image PDF), auto-trigger OCR
+      const cleanLen = allPagesText.replace(/--- PAGE \d+ ---/g, '').trim().length;
+      if (cleanLen < 60) {
+        setStatus('🔍 Scanned PDF detected. Running automatic English + Bengali OCR...', 'warn');
+        await runForceOCR();
+        return;
+      }
+
+      parseExtractedFarmerData(allPagesText, allItems);
+      setStatus('✅ PDF Data & Land Details extracted! Verify fields below before downloading.', 'ok');
+    } catch (err) {
+      console.error(err);
+      setStatus('⚠️ Error reading PDF: ' + err.message, 'warn');
+    }
+  }
+
+  function clusterLines(items) {
+    const sorted = [...items].sort((a, b) => b.y - a.y || a.x - b.x);
+    const rows = [];
+    for (const item of sorted) {
+      if (!item.str.trim()) continue;
+      let row = rows.find(r => Math.abs(r.y - item.y) <= 5);
+      if (!row) {
+        row = { y: item.y, cells: [] };
+        rows.push(row);
+      }
+      row.cells.push(item);
+    }
+    return rows.map(r => {
+      r.cells.sort((a, b) => a.x - b.x);
+      return r.cells.map(c => c.str.trim()).join(' | ');
+    });
+  }
+
+  async function extractEmbeddedPhotoFromPage(page) {
+    try {
+      const ops = await page.getOperatorList();
+      const viewport = page.getViewport({ scale: 2.0 });
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = viewport.width;
+      tempCanvas.height = viewport.height;
+      const ctx = tempCanvas.getContext('2d');
+      await page.render({ canvasContext: ctx, viewport }).promise;
+
+      // Try finding embedded image XObjects first
+      let bestImgDataUrl = null;
+      for (let i = 0; i < ops.fnArray.length; i++) {
+        if (ops.fnArray[i] === pdfjsLib.OPS.paintImageXObject || ops.fnArray[i] === pdfjsLib.OPS.paintJpegXObject) {
+          const objName = ops.argsArray[i][0];
+          try {
+            const imgObj = await new Promise((res) => page.objs.get(objName, res));
+            if (imgObj && imgObj.width >= 60 && imgObj.height >= 70 && imgObj.width < 800) {
+              const ratio = imgObj.height / imgObj.width;
+              if (ratio >= 0.8 && ratio <= 1.8) {
+                const c = document.createElement('canvas');
+                c.width = imgObj.width;
+                c.height = imgObj.height;
+                const cctx = c.getContext('2d');
+                if (imgObj.bitmap) {
+                  cctx.drawImage(imgObj.bitmap, 0, 0);
+                } else if (imgObj.data) {
+                  const imgData = cctx.createImageData(imgObj.width, imgObj.height);
+                  if (imgObj.data.length === imgObj.width * imgObj.height * 4) {
+                    imgData.data.set(imgObj.data);
+                  } else if (imgObj.data.length === imgObj.width * imgObj.height * 3) {
+                    for (let p = 0, q = 0; p < imgObj.data.length; p += 3, q += 4) {
+                      imgData.data[q] = imgObj.data[p];
+                      imgData.data[q+1] = imgObj.data[p+1];
+                      imgData.data[q+2] = imgObj.data[p+2];
+                      imgData.data[q+3] = 255;
+                    }
+                  }
+                  cctx.putImageData(imgData, 0, 0);
+                }
+                bestImgDataUrl = c.toDataURL('image/png');
+              }
+            }
+          } catch (_) {}
+        }
+      }
+
+      if (bestImgDataUrl) {
+        setPhotoSrc(bestImgDataUrl);
+      } else {
+        // Fallback: Crop top-right Farmer Photograph box from rendered Page 1
+        const cropX = Math.round(viewport.width * 0.77);
+        const cropY = Math.round(viewport.height * 0.085);
+        const cropW = Math.round(viewport.width * 0.165);
+        const cropH = Math.round(viewport.height * 0.155);
+        const c = document.createElement('canvas');
+        c.width = cropW;
+        c.height = cropH;
+        c.getContext('2d').drawImage(tempCanvas, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+        setPhotoSrc(c.toDataURL('image/png'));
+      }
+    } catch (err) {
+      console.warn('Photo extraction fallback skipped:', err);
+    }
+  }
+
+  async function runForceOCR() {
+    if (!lastUploadedPdfFile || !window.Tesseract) return;
+    setStatus('⏳ Running Tesseract OCR on all PDF pages (may take 10–20 sec)...', 'warn');
+    try {
+      const arrayBuffer = await lastUploadedPdfFile.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let ocrCombined = '';
+
+      for (let p = 1; p <= pdf.numPages; p++) {
+        const page = await pdf.getPage(p);
+        const viewport = page.getViewport({ scale: 2.2 });
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+
+        const { data: { text } } = await Tesseract.recognize(canvas, 'eng+ben');
+        ocrCombined += `--- OCR PAGE ${p} ---\n${text}\n\n`;
+      }
+
+      document.getElementById('debugRawText').value = ocrCombined;
+      parseExtractedFarmerData(ocrCombined, []);
+      setStatus('✅ OCR Extraction Completed! Review fields below.', 'ok');
+    } catch (err) {
+      setStatus('⚠️ OCR Error: ' + err.message, 'warn');
+    }
+  }
+
+  function parseExtractedFarmerData(rawText, items) {
+    const flat = rawText.replace(/\s+/g, ' ');
+
+    // 1. Enrollment Number (e.g. 19_305_2367_327865_005027)
+    const enrollMatch = flat.match(/\d{2}_\d{3}_\d{4}_\d{5,7}_\d{5,7}/);
+    if (enrollMatch) document.getElementById('inpEnrollNo').value = enrollMatch[0];
+
+    // 2. Farmer ID (11 digits)
+    const fidMatch = flat.match(/Farmer\s*ID[:\s|]*([0-9\s]{11,16})/i) || flat.match(/(\d{11})/);
+    if (fidMatch) {
+      const digits = fidMatch[1].replace(/\D/g, '').slice(0, 11);
+      if (digits.length === 11) {
+        document.getElementById('inpFarmerId').value = formatFarmerId(digits);
+      }
+    }
+
+    // 3. Farmer Name in English
+    const nameEnMatch = flat.match(/Farmer\s*Name\s*as\s*per\s*Aadhaar\s*in\s*English[:\s|]*([A-Z\s.]{3,45}?)(?=\s*(?:\||Farmer's\s*Name|Gender|Caste|Date))/i);
+    if (nameEnMatch) document.getElementById('inpNameEn').value = nameEnMatch[1].trim();
+
+    // 4. Farmer Name in Local Language (Bengali)
+    const nameBnMatch = flat.match(/Farmer's\s*Name\s*in\s*Local\s*Language[:\s|]*([ঀ-৿\s.]{2,45}?)(?=\s*(?:\||Gender|Date|Age|Identifier))/i);
+    if (nameBnMatch) document.getElementById('inpNameBn').value = nameBnMatch[1].trim();
+
+    // 5. DOB
+    const dobMatch = flat.match(/Date\s*of\s*Birth[:\s|]*(\d{2}[\/\-]\d{2}[\/\-]\d{4})/i);
+    if (dobMatch) document.getElementById('inpDob').value = dobMatch[1];
+
+    // 6. Gender
+    const genderMatch = flat.match(/Gender[:\s|]*(Male|Female|Other)/i);
+    if (genderMatch) document.getElementById('inpGender').value = genderMatch[1];
+
+    // 7. Father / Identifier Name (English first, fallback to Bengali)
+    const idEnMatch = flat.match(/Identifier\s*Name\s*in\s*English[:\s|]*([A-Za-z\s.]{2,40}?)(?=\s*(?:\||Identifier\s*Name\s*in\s*Local|Mobile|Contact|Caste))/i);
+    const idBnMatch = flat.match(/Identifier\s*Name\s*in\s*Local\s*Language[:\s|]*([ঀ-৿\s.]{2,40}?)(?=\s*(?:\||Mobile|Contact|Email|Farmer))/i);
+    if (idEnMatch && idEnMatch[1].trim().length > 1) {
+      document.getElementById('inpFather').value = idEnMatch[1].trim();
+    } else if (idBnMatch && idBnMatch[1].trim().length > 1) {
+      document.getElementById('inpFather').value = idBnMatch[1].trim();
+    } else {
+      document.getElementById('inpFather').value = 'N/A';
+    }
+
+    // 8. Mobile Number
+    const mobMatch = flat.match(/Mobile\s*Number[:\s|]*(\d{10})/i) || flat.match(/([6-9]\d{9})/);
+    if (mobMatch) document.getElementById('inpMobile').value = mobMatch[1];
+
+    // 9. Address (English + Bengali)
+    const addrEnMatch = flat.match(/Address\s*in\s*English[:\s|]*([A-Za-z0-9,\s\-]{3,60}?)(?=\s*(?:\||Address\s*in\s*Local|Land\s*Ownership))/i);
+    const addrBnMatch = flat.match(/Address\s*in\s*Local\s*Language[:\s|]*([ঀ-৿0-9,\s\-]{3,60}?)(?=\s*(?:\||Land\s*Ownership|State))/i);
+    const addrParts = [];
+    if (addrEnMatch && addrEnMatch[1].trim()) addrParts.push(addrEnMatch[1].trim());
+    if (addrBnMatch && addrBnMatch[1].trim()) addrParts.push(addrBnMatch[1].trim());
+    if (addrParts.length) document.getElementById('inpAddress').value = addrParts.join(' / ');
+
+    // 10. Multi-Strategy Land Ownership Table Extraction
+    const extractedPlots = extractLandPlots(rawText, items);
+    if (extractedPlots.length > 0) {
+      plotsData = extractedPlots;
+      document.getElementById('inpDistrict').value = extractedPlots[0].district;
+      renderPlotEditor();
+      syncRecordedPlotsFromTable();
+    }
+
+    renderCard();
+  }
+
+  function extractLandPlots(rawText, items) {
+    const results = [];
+
+    // Strategy A: Match structured rows in normalized stream (handles wrapped cells like WEST BENGAL | BANKURA | SubDist | Village | Daag | ... | Area)
+    const normalized = rawText
+      .replace(/--- PAGE \d+ ---/g, ' ')
+      .replace(/\|/g, ' ')
+      .replace(/\s+/g, ' ');
+
+    // Pattern matching rows starting with State name (e.g., WEST BENGAL) followed by District, Sub-District, Village, Daag No, and decimal Hectare area
+    const rowRegex = /WEST\s*BENGAL\s+([A-Z]{3,20})\s+([A-Za-z\s]{3,24}?)\s+([A-Za-z\s]{3,28}?)\s+(\d{1,5}(?:\/\d{1,4})?)\s+.*?(?:Whole\s*Share|Joint\s*Share|Single|Owner)\s+(\d+\.\d{4,6})/gi;
+    let m;
+    while ((m = rowRegex.exec(normalized)) !== null) {
+      const dist = m[1].trim().toUpperCase();
+      const sub = m[2].trim();
+      const vill = m[3].trim();
+      const daag = m[4].trim();
+      const area = m[5].trim();
+      if (!results.some(r => r.daag === daag && r.area === area)) {
+        results.push({ district: dist, sub, vill, daag, area });
+      }
+    }
+
+    // Strategy B: Fallback line-by-line scanner if Strategy A didn't catch all rows
+    if (results.length === 0) {
+      const lines = rawText.split('\n');
+      for (const line of lines) {
+        if (/BANKURA|PURULIA|BIRBHUM|BARDHAMAN|HOOGHLY|MIDNAPORE|MEDINIPUR|NADIA|MURSHIDABAD|MALDA|HOWRAH/i.test(line)) {
+          const cells = line.split('|').map(c => c.trim()).filter(Boolean);
+          const distIdx = cells.findIndex(c => /^[A-Z]{4,18}$/.test(c) && c !== 'WEST' && c !== 'BENGAL' && c !== 'SINGLE');
+          const areaMatch = line.match(/(0\.\d{4,6}|[1-9]\d*\.\d{4,6})/);
+          if (distIdx !== -1 && areaMatch) {
+            const dist = cells[distIdx];
+            const sub = cells[distIdx + 1] || '';
+            const vill = cells[distIdx + 2] || '';
+            const daagCell = cells.slice(distIdx + 2, distIdx + 6).find(c => /^\d{1,5}(\/\d{1,4})?$/.test(c)) || '';
+            if (daagCell) {
+              results.push({ district: dist, sub, vill, daag: daagCell, area: areaMatch[1] });
+            }
+          }
+        }
+      }
+    }
+
+    return results;
+  }
+
+  // =========================================================
+  // HIGH-DPI PNG EXPORT (300 / 600 / 900 DPI)
+  // =========================================================
+  async function downloadCardPng(side) {
+    const targetEl = document.getElementById(side === 'front' ? 'frontCard' : 'backCard');
+    const dpi = parseInt(document.getElementById('dpiSelect').value, 10) || 600;
+    // CR80 width = 86mm = 3.3858 inches. Base element width = 680px.
+    const targetWidthPx = Math.round((86 / 25.4) * dpi);
+    const scaleFactor = targetWidthPx / 680;
+
+    const farmerName = (document.getElementById('inpNameEn').value.trim() || 'Farmer').replace(/\s+/g, '_');
+    const fileName = `AgriStack_${farmerName}_${side.toUpperCase()}_${dpi}DPI.png`;
+
+    try {
+      const canvas = await html2canvas(targetEl, {
+        scale: scaleFactor,
+        useCORS: true,
+        backgroundColor: null,
+        logging: false
+      });
+
+      const link = document.createElement('a');
+      link.download = fileName;
+      link.href = canvas.toDataURL('image/png', 1.0);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      alert('Export failed: ' + err.message);
+    }
+  }
+
+  function loadSampleData() {
+    document.getElementById('inpNameEn').value = 'SANTU CHANDRA';
+    document.getElementById('inpNameBn').value = 'সন্তু চন্দ্র';
+    document.getElementById('inpFarmerId').value = '555 66 77 88 99';
+    document.getElementById('inpDob').value = '01/01/1980';
+    document.getElementById('inpGender').value = 'Male';
+    document.getElementById('inpFather').value = 'ABCD CHANDRA';
+    document.getElementById('inpMobile').value = '9735351587';
+    document.getElementById('inpDistrict').value = 'BANKURA';
+    document.getElementById('inpEnrollNo').value = '11_222_3333_444444_555555';
+    document.getElementById('inpEkyc').value = 'UIDAI Aadhaar Verified';
+    document.getElementById('inpAddress').value = 'Khayerbuni Madanmohanpur / খয়েরবুনি মদনমোহনপুর';
+    plotsData = [
+      { district: 'BANKURA', sub: 'Kotulpur', vill: 'Chak Murakha', daag: '623', area: '0.249430' },
+      { district: 'BANKURA', sub: 'Kotulpur', vill: 'Chak Murakha', daag: '527', area: '0.655100' },
+      { district: 'BANKURA', sub: 'Kotulpur', vill: 'Chak Murakha', daag: '528', area: '0.165060' },
+      { district: 'BANKURA', sub: 'Kotulpur', vill: 'Chak Murakha', daag: '526', area: '0.147390' },
+      { district: 'BANKURA', sub: 'Kotulpur', vill: 'Chak Murakha', daag: '507', area: '0.327540' }
+    ];
+    setPhotoSrc(DEFAULT_AVATAR);
+    resetPhotoAdjust();
+    renderPlotEditor();
+    syncRecordedPlotsFromTable();
+    renderCard();
+  }
+
+  // Initialize on load
+  window.addEventListener('DOMContentLoaded', () => {
+    setPhotoSrc(DEFAULT_AVATAR);
+    renderPlotEditor();
+    renderCard();
+  });
+</script>
+</body>
+</html>
